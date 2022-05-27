@@ -3,6 +3,6 @@ import { Button } from '../Atom/Button';
 
 export const ShadowButon = styled(Button)`
   &:hover {
-    box-shadow: 0 0 10px ${(props) => props.theme.colors.black};
+    box-shadow: 5px 5px 10px ${(props) => props.theme.shadow};
   }
 `;

@@ -6,6 +6,7 @@ export const theme = {
     black: '#000000',
     white: '#ffffff',
   },
+  shadow: 'rgba(0, 0, 0, 0.5)',
 } as const;
 
 export const Theme: FC<{ children: ReactNode }> = ({ children }) => {
