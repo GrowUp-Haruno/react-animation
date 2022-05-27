@@ -1,46 +1,124 @@
-# Getting Started with Create React App
+# まとめ
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## CSS
 
-## Available Scripts
+### transition
 
-In the project directory, you can run:
+#### 引数
+1. CSSプロパティ
+   - 変化させたいプロパティを指定する
+   - すべてを対象にする場合は all を指定する
+2. 変化時間
+3. イージング関数
+4. 遅延時間
 
-### `yarn start`
+#### 使用例
+```scss
+transition: color 0.5s ease 0.5s, background-color 0.5s ease 0.5s;
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## styled-components
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### Themeについて
+色や余白などの固定したい要素はthemeとして設定することができます。
+他のコンポーネントからthemeを呼び出すには、まず```ThemeProvider```で全体をラップします。
 
-### `yarn test`
+ここでは、Themeコンポーネントに```ThemeProvider```を呼び出して、theme propsにtheme変数を指定することで、
+ラップされた```{children}```内のコンポーネントでthemeを使うことができます。
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```typescript: Theme.tsx
+import { FC, ReactNode } from 'react';
+import { ThemeProvider } from 'styled-components';
 
-### `yarn build`
+export const theme = {
+  colors: {
+    black: '#000000',
+    white: '#ffffff',
+  },
+} as const;
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+export const Theme: FC<{ children: ReactNode }> = ({ children }) => {
+  return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
+};
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+このコンポーネントをApp.tsxで呼び出します。
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```typescript: App.tsx
+import { ThemeProvider } from 'styled-components';
+import { theme } from './Atom/Theme';
 
-### `yarn eject`
+function App() {
+  return (
+    <ThemeProvider theme={theme}>
+      // children
+    </ThemeProvider>
+  );
+}
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+export default App;
+```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+themeの呼び出し動作を確認するため、Buttonコンポーネントを作成します。
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+```typescript: Button.tsx
+import styled from 'styled-components';
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+export const Button = styled.button`
+  background-color: #ffffff;
+  color: #000000;
+  padding: 12px 40px;
+  margin: 40px 0;
+  border: 1px solid black;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.5s;
 
-## Learn More
+  /* カーソルホバー時の設定 */
+  &:hover {
+    background-color: #000000;
+    color: #ffffff;
+  }
+`;
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+この中で、`background-color`と`color`に対してthemeをあてるには次のようにします。
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```typescript
+export const Button = styled.button`
+  background-color: ${(props) => props.theme.colors.white};
+  color: ${(props) => props.theme.colors.black};
+  /* 省略 */   
+  &:hover {
+    background-color: ${(props) => props.theme.colors.black};
+    color: ${(props) => props.theme.colors.white};
+  }
+`;
+```
+
+呼び出しの基本的な構文は次のとおりです。
+
+```typescript
+${(props) => props.theme.color.black }
+```
+
+theme以降はThemeコンポーネントで宣言したtheme変数のプロパティ名を指定します。
+これでも問題なく動きますが、この時点ではTypeScriptの恩恵である補完が一切働きません。
+
+```typescript
+import 'styled-components';
+
+// Themeコンポーネントで宣言したtheme変数を呼び出し
+import { theme } from '../Atom/Theme';
+
+// themeの型をtypeofで変換してThemeに代入
+type Theme = typeof theme;
+
+// styled-componentsのDefaultThemeにThemeを注入することで、各コンポーネントでコード補完が効くようになります
+declare module 'styled-components' {
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  export interface DefaultTheme extends Theme {}
+}
+```
+
+VS Codeなどのエディタを使用している場合、コード補完効きます。
