@@ -1,70 +1,28 @@
-import { Button } from './Atom/Button';
-import { Container, VStack } from './Atom/Layout';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { Index } from './Pages/Index';
+import { Buttons } from './Pages/Buttons';
+import { Rects } from './Pages/Rects';
 import { Theme } from './Atom/Theme';
-import { FloatButton } from './Elements/FloatButton';
-import { MultifunctionalButton } from './Elements/MultifunctionalButton';
-import { ReverseColorButton } from './Elements/ReverseColorButton';
-import { ShadowButon } from './Elements/ShadowButon';
+import { Container } from './Atom/Layout';
 
-function App() {
+const App = () => {
   return (
     <Theme>
       <Container>
-        <VStack>
-          <p>基本のボタン</p>
-          <Button>Button</Button>
-        </VStack>
-
-        <VStack>
-          <p>ホバーすると色が反転するボタン</p>
-          <ReverseColorButton>Reverse Color</ReverseColorButton>
-        </VStack>
-
-        <VStack>
-          <p>ホバーすると影が表示するボタン</p>
-          <ShadowButon>Shadow</ShadowButon>
-        </VStack>
-
-        <VStack>
-          <p>ホバーすると浮き上がる</p>
-          <FloatButton>Shadow</FloatButton>
-        </VStack>
-
-        <VStack>
-          <p>ホバーすると色が反転するボタン(多機能ボタン)</p>
-          <MultifunctionalButton reverseColor>Reverse Color</MultifunctionalButton>
-        </VStack>
-        <VStack>
-          <p>ホバーすると影が表示するボタン(多機能ボタン)</p>
-          <MultifunctionalButton shadow>Reverse Color</MultifunctionalButton>
-        </VStack>
-        <VStack>
-          <p>ホバーすると色が反転して、影が表示するボタン(多機能ボタン)</p>
-          <MultifunctionalButton reverseColor shadow>
-            Reverse Color
-          </MultifunctionalButton>
-        </VStack>
-        <VStack>
-          <p>ホバーすると色が反転して、行間が開く(多機能ボタン)</p>
-          <MultifunctionalButton reverseColor letterSpace>
-            Reverse Color
-          </MultifunctionalButton>
-        </VStack>
-        <VStack>
-          <p>ホバーすると浮き上がる(多機能ボタン)</p>
-          <MultifunctionalButton float offsetShadow>
-            Reverse Color
-          </MultifunctionalButton>
-        </VStack>
-        <VStack>
-          <p>丸みを帯びたボタンでホバーすると沈み込む(多機能ボタン)</p>
-          <MultifunctionalButton radius shink offsetShinkShadow>
-            Reverse Color
-          </MultifunctionalButton>
-        </VStack>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/buttons" element={<Buttons />} />
+            <Route path="/rects" element={<Rects />} />
+            {/* <Route path="/" element={<Index />} />
+        <Route path="/record" element={<Record />} />
+        <Route path="/user" element={<User />} />
+        <Route path="*" element={<NotFound />} /> */}
+          </Routes>
+        </BrowserRouter>
       </Container>
     </Theme>
   );
-}
+};
 
 export default App;
